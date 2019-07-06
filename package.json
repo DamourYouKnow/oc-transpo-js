@@ -1,0 +1,23 @@
+{
+  "name": "oc-transpo-js",
+  "version": "1.0.0",
+  "description": "OC Transpo API wrapper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DamourYouKnow/oc-transpo-js.git"
+  },
+  "author": "DamourYouKnow",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.1",
+    "eslint-config-google": "^0.13.0"
+  }
+}
