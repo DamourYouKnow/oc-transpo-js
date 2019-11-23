@@ -1,10 +1,14 @@
 {
   "name": "oc-transpo-js",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "OC Transpo API wrapper",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register ./tests/test.ts",
+    "build": "npm run lint",
+    "lint": "./node_modules/.bin/eslint . --ext .js,.ts,.tsx",
+    "lint-fix": "./node_modules/.bin/eslint . --fix --ext .js,.ts,.tsx"
   },
   "repository": {
     "type": "git",
@@ -13,11 +17,18 @@
   "author": "DamourYouKnow",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.7"
+    "request": "^2.88.0"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "@types/request": "^2.48.3",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
     "eslint": "^6.0.1",
-    "eslint-config-google": "^0.13.0"
+    "eslint-config-google": "^0.13.0",
+    "mocha": "^6.2.2",
+    "ts-mocha": "^6.0.0",
+    "ts-node": "^8.5.2",
+    "typescript": "^3.7.2"
   }
 }

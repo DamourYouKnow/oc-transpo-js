@@ -1,9 +1,12 @@
 {
     "env": {
         "es6": true,
-        "node": true
+        "browser": true,
+        "node": true,
+        "mocha": true
     },
-    "extends": ["eslint:recommended", "google"],
+    "extends": ["plugin:@typescript-eslint/recommended"],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module"
@@ -19,6 +22,11 @@
         "comma-dangle": 0,
         "max-len": 2,
         "require-jsdoc": 0,
-        "no-invalid-this": 1
+        "no-invalid-this": 1,
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-angle-bracket-type-assertion": "off",
+        "@typescript-eslint/no-namespace": "off"
     }
-} 
+ } 
