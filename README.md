@@ -1,7 +1,7 @@
 # oc-transpo-js
 
 This is an unofficial JavaScript/TypeScript API wrapper for the OC Transpo API. 
-This npm puproject is in no way affiliated with OC Tranpo.
+This project is in no way affiliated with OC Tranpo.
 
 The offical API documentation can be found 
 [here](http://www.octranspo.com/en/plan-your-trip/travel-tools/developers/dev-doc).
