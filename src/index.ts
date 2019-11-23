@@ -1,7 +1,7 @@
 import * as request from 'request';
 
 interface Stop {
-    number: number;
+    number: string;
     name: string;
 }
 
@@ -14,7 +14,7 @@ interface StopTrips extends Stop {
 }
 
 interface Route {
-    number: number;
+    number: string;
     directionId: 0 | 1;
     direction: string;
     heading: string;
@@ -28,16 +28,20 @@ interface Trip {
     destination: string;
     scheduledTime: Date;
     eta: number;
-    etaAge: number;
     lastTrip: boolean;
     bus?: Bus;
 }
 
 interface Bus {
     type: string;
+    gps?: GPS;
+}
+
+interface GPS {
     latitude: number;
     longitude: number;
     speed: number;
+    etaAge: number;
 }
 
 const api = 'https://api.octranspo1.com/v1.3';
@@ -51,7 +55,7 @@ export default class {
         this._apiKey = apiKey;
     }
 
-    async stopSummary(stopNumber: number): Promise<StopSummary> {
+    async stopSummary(stopNumber: string): Promise<StopSummary> {
         const response = await this._post(
             'GetRouteSummaryForStop', 
             {'stopNo': stopNumber}
@@ -59,14 +63,18 @@ export default class {
 
         if (response['error']) throw Error(response['error']);
 
-        return {
-            number: response['StopNo'],
-            name: response['StopDescription'],
-            routes: extractRouteArray(response)
-        };
+        try {
+            return {
+                number: response['StopNo'],
+                name: response['StopDescription'],
+                routes: extractRouteArray(response)
+            };
+        } catch (err) {
+            throw Error(`Could not find info for stop ${stopNumber}`);
+        }
     }
 
-    async stopTrips(stopNumber: number): Promise<StopTrips> {
+    async stopTrips(stopNumber: string): Promise<StopTrips> {
         const response = await  this._post(
             'GetNextTripsForStopAllRoutes',
             {'stopNo': stopNumber}
@@ -74,12 +82,15 @@ export default class {
 
         if (response['error']) throw Error(response['error']);
 
-
-        return {
-            number: response['StopNo'],
-            name: response['StopDescription'],
-            routes: extractRouteTripsArray(response)
-        };
+        try {
+            return {
+                number: response['StopNo'],
+                name: response['StopDescription'],
+                routes: extractRouteTripsArray(response)
+            };
+        } catch (err) {
+            throw Error(`Could not find info for stop ${stopNumber}`);
+        }
     }
 
 
@@ -115,7 +126,7 @@ function extractRouteTripsArray(stop: any): RouteTrips[] {
 
 function extractRoute(route: any): Route {
     return {
-        number: Number(route['RouteNo']),
+        number: route['RouteNo'],
         directionId: route['DirectionID'] == 0 ? 0 : 1,
         direction: route['Direction'],
         heading: route['RouteHeading']
@@ -134,26 +145,28 @@ function extractRouteTrips(route: any): RouteTrips {
 function extractTrip(trip: any): Trip {
     const now = new Date();
     const scheduled = trip['TripStartTime'].split(':');
-    const scheduledTime = Date.parse(
-        `${now.getFullYear()}-
-        ${(now.getMonth() + 1).toString().padStart(2, '0')}-
-        ${now.getDate().toString().padStart(2, '0')}T
-        ${scheduled[0].padStart(2, '0')}:${scheduled[1].padStart(2, '0')}:
-        00.000`
-    );
+    const scheduledTime = `${now.getFullYear()}-`
+        + `${(now.getMonth() + 1).toString().padStart(2, '0')}-`
+        + `${now.getDate().toString().padStart(2, '0')}T`
+        + `${scheduled[0].padStart(2, '0')}:${scheduled[1].padStart(2, '0')}:`
+        + `00.000`;
 
     return {
         destination: trip['TripDestination'],
-        scheduledTime: new Date(scheduledTime),
+        scheduledTime: new Date(Date.parse(scheduledTime)),
         eta: Number(trip['AdjustedScheduleTime']),
-        etaAge: Number(trip['AdjustmentAge']),
-        lastTrip: trip['AdjustmentAge'],
+        lastTrip: trip['LastTripOfSchedule'],
         bus: trip['BusType'] ?
             {
                 type: trip['BusType'],
-                latitude: trip['Latitude'],
-                longitude: trip['Longitude'],
-                speed: trip['GPSSpeed']
+                gps: trip['Latitude'] ?
+                    {
+                        latitude: trip['Latitude'],
+                        longitude: trip['Longitude'],
+                        speed: trip['GPSSpeed'],
+                        etaAge: Number(trip['AdjustmentAge'])
+                    } :
+                    undefined
             } :
             undefined
     };

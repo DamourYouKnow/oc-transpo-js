@@ -19,11 +19,11 @@ describe('Setup', () => {
 
 describe('OCTranspo', () => {
     it('stopSummary', async () => {
-        const stop = await api.stopSummary(4356);
+        const stop = await api.stopSummary('4356');
     });
     
     it('stopTrips', async () => {
-        const stop = await api.stopTrips(4168);
-        const stopRoute = await api.stopTrips(3011); 
+        const stop = await api.stopTrips('4168');
+        const stopRoute = await api.stopTrips('3011');
     });
 });

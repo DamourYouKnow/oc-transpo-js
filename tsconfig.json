@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "rootDir": "./src",
-    "outDir": "../dist",
+    "outDir": "./dist",
     "module": "commonjs",
     "strict": true,  
     "forceConsistentCasingInFileNames": true,

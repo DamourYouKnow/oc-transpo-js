@@ -1,14 +1,16 @@
 {
   "name": "oc-transpo-js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "OC Transpo API wrapper",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register ./tests.ts",
-    "build": "npm run lint",
+    "build": "npm run lint && npm run test && npm run tsc",
     "lint": "./node_modules/.bin/eslint . --ext .js,.ts,.tsx",
-    "lint-fix": "./node_modules/.bin/eslint . --fix --ext .js,.ts,.tsx"
+    "lint-fix": "./node_modules/.bin/eslint . --fix --ext .js,.ts,.tsx",
+    "tsc": "npx tsc",
+    "prepare": "npm run tsc"
   },
   "repository": {
     "type": "git",

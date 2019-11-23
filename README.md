@@ -1,10 +1,12 @@
 # oc-transpo-js
 
-This is an unofficial JavaScript API wrapper for the OC Transpo API. This 
-project is in no way affiliated with OC Tranpo.
+This is an unofficial JavaScript/TypeScript API wrapper for the OC Transpo API. 
+This npm puproject is in no way affiliated with OC Tranpo.
 
 The offical API documentation can be found 
 [here](http://www.octranspo.com/en/plan-your-trip/travel-tools/developers/dev-doc).
+
+The real API responses have been modified to maintain consistency.
 
 ## Setup:
 
@@ -15,84 +17,94 @@ To import the library:
 const OCTranpso = require('oc-transpo-js');
 
 // Third argument is the optional API version
-const api = new OCTranspo(appId, apiKey, '1.3');
+const api = new OCTranspo(appId, apiKey);
 ```
 
 ## Methods:
 
 Note that all of the methods return promises.
 
-### getRouteSummaryForStop(stopNo, routeNo)
+### stopSummary(stopNo)
 Retrieves the routes for a given stop number. The **routeNo** parameter is 
 optional.
 
 Example:
 ```js
-api.getRouteSummaryForStop(4356).then(result).catch(err);
+api.stopSummary('4356').then(result).catch(err);
 ```
 
 Result:
-```json
+```js
 {
-    "StopNo": "4356",
-    "StopDescription": "FINDLAY CREEK / GRACEWOOD",
-    "Error": "",
-    "Routes": {
-        "Route": [
-            {
-                "RouteNo": "93",
-                "DirectionID": 1,
-                "Direction": "Northbound",
-                "RouteHeading": "Greenboro/Hurdman"
-            },
-            {
-                "RouteNo": "294",
-                "DirectionID": 0,
-                "Direction": "Inbound",
-                "RouteHeading": "Hurdman"
-            }
-        ]
-    }
+    "number": "4356",
+    "name": "FINDLAY CREEK / GRACEWOOD",
+    "routes": [
+        {
+            "number": 93,
+            "directionId": 1,
+            "direction": "",
+            "heading": "Greenboro/Hurdman"
+        }
+    ]
 }
 ```
 
-### getNextTripsForStop(stopNo, routeNo)
-Retrieves the next three trips for all routes or a single route for a specific 
-stop. The **routeNo** parameter is optional.
+### stopTrips(stopNo)
+Retrieves the next three trips for all routes for a specific 
+stop.
 
 Example:
 ```js
-api.getNextTripsForStop(4356).then(result).catch(err);
+api.stopTrips('4168').then(result).catch(err);
 ```
 
 Result:
 ```json
 {
-    "StopNo": "4356",
-    "StopDescription": "FINDLAY CREEK / GRACEWOOD",
-    "Error": "",
-    "Routes": {
-        "Route": [
-            {
-                "RouteNo": "93",
-                "DirectionID": 1,
-                "Direction": "Northbound",
-                "RouteHeading": "Greenboro/Hurdman",
-                "Trips": [
-                    {
-                        "TripDestination": "Greenboro",
-                        "TripStartTime": "20:32",
-                        "AdjustedScheduleTime": "4",
-                        "AdjustmentAge": "0.73",
-                        "LastTripOfSchedule": false,
-                        "BusType": "6LB - 60",
-                        "Latitude": "45.314684",
-                        "Longitude": "-75.629928",
-                        "GPSSpeed": "38.9"
+    "number": "4168",
+    "name": "UPLANDS / RICH LITTLE",
+    "routes": [
+        {
+            "number": "90",
+            "directionId": 0,
+            "direction": "",
+            "heading": "Greenboro",
+            "trips": [
+                {
+                    "destination": "Greenboro",
+                    "scheduledTime": "2019-11-23T15:23:00.000Z",
+                    "eta": 15,
+                    "lastTrip": false,
+                    "bus": {
+                        "type": "6EB - 60",
+                        "gps": {
+                            "latitude": "45.396614",
+                            "longitude": "-75.669391",
+                            "speed": "47.8",
+                            "etaAge": 0.46
+                        }
                     }
-                ]
-            }
-        ]
-    }
+                },
+                {
+                    "destination": "Greenboro",
+                    "scheduledTime": "2019-11-23T15:53:00.000Z",
+                    "eta": 44,
+                    "lastTrip": false,
+                    "bus": {
+                        "type": "6EB - 60"
+                    }
+                },
+                {
+                    "destination": "Greenboro",
+                    "scheduledTime": "2019-11-23T16:23:00.000Z",
+                    "eta": 74,
+                    "lastTrip": false,
+                    "bus": {
+                        "type": "4LB - IN"
+                    }
+                }
+            ]
+        }
+    ]
 }
 ```
