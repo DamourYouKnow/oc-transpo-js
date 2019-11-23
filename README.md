@@ -14,7 +14,9 @@ Install with `npm install oc-transpo-js`.
 
 To import the library:
 ```js
-const OCTranpso = require('oc-transpo-js');
+const OCTranpso = require('oc-transpo-js').default;
+
+// or import OCTranspo from 'oc-transpo-js'
 
 // Third argument is the optional API version
 const api = new OCTranspo(appId, apiKey);
