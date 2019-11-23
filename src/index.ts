@@ -1,4 +1,4 @@
-import request from 'request';
+import * as request from 'request';
 
 interface Stop {
     number: number;
@@ -66,22 +66,13 @@ export default class {
         };
     }
 
-    async stopTrips(
-        stopNumber: number,
-        routeNumber?: number
-    ): Promise<StopTrips> {
-        const response = routeNumber ?
-            await this._post(
-                'GetNextTripsForStop',
-                {'stopNo': stopNumber, 'routeNo': routeNumber}
-            ) :
-            await this._post(
-                'GetNextTripsForStopAllRoutes',
-                {'stopNo': stopNumber}
-            );
+    async stopTrips(stopNumber: number): Promise<StopTrips> {
+        const response = await  this._post(
+            'GetNextTripsForStopAllRoutes',
+            {'stopNo': stopNumber}
+        );
 
         if (response['error']) throw Error(response['error']);
-
 
 
         return {
@@ -103,9 +94,12 @@ export default class {
         };
 
         return new Promise<any>((resolve, reject) => {
-            request.post(`${api}/${method}`, options, (err, response) => {
+            request.post(`${api}/${method}`, options, (err, response, body) => {
                 if (err) reject(err);
-                else resolve(response);
+                if (response.statusCode !== 200) {
+                    throw Error(`HTTP code ${response.statusMessage}`);
+                }
+                else resolve(body[Object.keys(body)[0]]);
             });
         });
     }
@@ -144,7 +138,8 @@ function extractTrip(trip: any): Trip {
         `${now.getFullYear()}-
         ${(now.getMonth() + 1).toString().padStart(2, '0')}-
         ${now.getDate().toString().padStart(2, '0')}T
-        ${scheduled[0].leftPad(2, '0')}:${scheduled[1].leftPad(2, '0')}:00.000`
+        ${scheduled[0].padStart(2, '0')}:${scheduled[1].padStart(2, '0')}:
+        00.000`
     );
 
     return {
@@ -166,10 +161,11 @@ function extractTrip(trip: any): Trip {
 
 // The OC Transpo API is a little weird...
 function extractArray(obj: any, outerKey: string, innerKey: string): any[] {
-    if (Array.isArray(outerKey)) return obj;
+    const outerObj = obj[outerKey];
+    if (Array.isArray(outerObj)) return outerObj;
 
-    const innerObj = obj[outerKey][innerKey];
-    if (!innerObj) return [obj];
+    const innerObj = outerObj[innerKey];
+    if (!innerObj) return [outerObj];
     if (Array.isArray(innerObj)) return innerObj;
     return [innerObj];
 }
